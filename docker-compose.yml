@@ -1,0 +1,10 @@
+#version: '2'
+
+service:
+  front:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/opt/app
+      - /opt/app/node_modules
