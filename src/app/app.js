@@ -1,21 +1,15 @@
-/*const express = require('express');
-const morgan = require('morgan');
-const app = express();
-
-app.use(morgan("dev"));
-
-app.use(require('./routes/index'));
-
-module.exports = app;*/
-
 import React, { Component } from 'react';
+<<<<<<< HEAD
 import WeatherInfo from './components/WeatherInfo';
 import WeatherForm from './components/WeatherForm';
 import { WEATHER_KEY } from './keys';
+=======
+>>>>>>> ee6e2a17513110fef790fff4e3717b561d55d56d
 import Map from "./components/GMap";
 
 class App extends Component {
 
+<<<<<<< HEAD
     statee = {
         temperature: '',
         lat: '',
@@ -46,14 +40,19 @@ class App extends Component {
     }
 
 
+=======
+>>>>>>> ee6e2a17513110fef790fff4e3717b561d55d56d
     render() {
         
         return (
             <div className="containerp-4">
                 <div className="row">
                     <div className="col-md-6 mx-auto">
+<<<<<<< HEAD
                         <WeatherForm getWeather={this.getWeather} />
                         <WeatherInfo {...this.statee} />
+=======
+>>>>>>> ee6e2a17513110fef790fff4e3717b561d55d56d
                         <Map
                             {...this.statee}
                             google={this.props.google}

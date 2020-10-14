@@ -2,6 +2,9 @@ import React from 'react'
 import { withGoogleMap, GoogleMap, withScriptjs, InfoWindow, Marker } from "react-google-maps";
 import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
+import WeatherForm from './WeatherForm';
+import WeatherInfo from './WeatherInfo';
+import { WEATHER_KEY } from '../keys';
 
 Geocode.setApiKey("AIzaSyB7-xPxXdnAk14Eto8ngIlq_vXsd44vNDQ");
 Geocode.enableDebug();
@@ -21,7 +24,8 @@ class Map extends React.Component {
             markerPosition: {
                 lat: this.props.center.lat,
                 lng: this.props.center.lng
-            }
+            },
+            temperature: ''
         }
     }
     /**
@@ -195,6 +199,19 @@ class Map extends React.Component {
             }
         );
     };
+
+    getTemperature = async e => {
+        e.preventDefault();
+        
+        const API_URL = `http://api.openweathermap.org/data/2.5/weather?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}&appid=${WEATHER_KEY}&units=metric`;
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        console.log(data.main.temp);
+        this.setState({
+            temperature: data.main.temp,
+        })
+    }
+
     render() {
         const AsyncMap = withScriptjs(
             withGoogleMap(
@@ -245,6 +262,10 @@ class Map extends React.Component {
                         <input type="text" name="address" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.address} />
                     </div>
                 </div>
+                <div>
+                    <WeatherForm handleClick={this.getTemperature} />
+                    <WeatherInfo {...this.state} />
+                </div>
                 <AsyncMap
                     googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7-xPxXdnAk14Eto8ngIlq_vXsd44vNDQ&libraries=places"
                     loadingElement={
@@ -259,7 +280,12 @@ class Map extends React.Component {
                 />
             </div>
         } else {
-            map = <div style={{ height: this.props.height }} />
+            map = (
+                <div style={{ height: this.props.height }}>
+                    <WeatherInfo temperature={this.state.temperature} />
+                </div>
+            )
+            
         }
         return (map)
     }
