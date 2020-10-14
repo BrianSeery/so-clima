@@ -10,7 +10,7 @@ class Map extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            address: '',
+            address: props.temperature,
             city: '',
             area: '',
             state: '',
@@ -35,7 +35,6 @@ class Map extends React.Component {
                     city = this.getCity(addressArray),
                     area = this.getArea(addressArray),
                     state = this.getState(addressArray);
-
                 console.log('city', city, area, state);
 
                 this.setState({
@@ -139,7 +138,7 @@ class Map extends React.Component {
       * When the user types an address in the search box
       * @param place
       */
-    onPlaceSelected = (place) => {
+    onPlaceSelected = (place) => {      //Cuando buscar
         const address = place.formatted_address,
             addressArray = place.address_components,
             city = this.getCity(addressArray),
@@ -147,6 +146,8 @@ class Map extends React.Component {
             state = this.getState(addressArray),
             latValue = place.geometry.location.lat(),
             lngValue = place.geometry.location.lng();
+            console.log(lngValue);
+            console.log(latValue);
         // Set these values in the state.
         this.setState({
             address: (address) ? address : '',
@@ -170,7 +171,7 @@ class Map extends React.Component {
       *
       * @param event
       */
-    onMarkerDragEnd = (event) => {
+    onMarkerDragEnd = (event) => {      //Cuando arrastro
         console.log('event', event);
         let newLat = event.latLng.lat(),
             newLng = event.latLng.lng(),
@@ -240,19 +241,7 @@ class Map extends React.Component {
             map = <div>
                 <div>
                     <div className="form-group">
-                        <label htmlFor="">City</label>
-                        <input type="text" name="city" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.city} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="">Area</label>
-                        <input type="text" name="area" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.area} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="">State</label>
-                        <input type="text" name="state" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.state} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="">Address</label>
+                        <label htmlFor="">Ciudad</label>
                         <input type="text" name="address" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.address} />
                     </div>
                 </div>
