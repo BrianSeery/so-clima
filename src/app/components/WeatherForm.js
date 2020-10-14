@@ -1,4 +1,5 @@
 import React from 'react';
+import SearchLocationInput from './SearchLocationInput';
 
 const WeatherForm = props => (
     <div className='card card-body'>
