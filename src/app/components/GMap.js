@@ -4,7 +4,9 @@ import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
 import WeatherForm from './WeatherForm';
 import WeatherInfo from './WeatherInfo';
-import { WEATHER_KEY } from '../keys';
+import { WEATHER_KEY } from '../Weather';
+import { CLIMA_CELL_KEY } from '../ClimaCell';
+import { AccuWeather} from '../AccuWeather';
 
 Geocode.setApiKey("AIzaSyB7-xPxXdnAk14Eto8ngIlq_vXsd44vNDQ");
 Geocode.enableDebug();
@@ -49,7 +51,7 @@ class Map extends React.Component {
                 })
             },
             error => {
-                console.error(error);
+                //console.error(error);
             }
         );
     };
@@ -202,13 +204,44 @@ class Map extends React.Component {
 
     getTemperature = async e => {
         e.preventDefault();
-        
-        const API_URL = `http://api.openweathermap.org/data/2.5/weather?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}&appid=${WEATHER_KEY}&units=metric`;
-        const response = await fetch(API_URL);
+
+        //Consulta ClimaCell
+        const ClimaCell_URL = `https://api.climacell.co/v3/weather/nowcast?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}&unit_system=si&timestep=5&start_time=now&fields=temp&apikey=${CLIMA_CELL_KEY}`;
+        const res = await fetch(ClimaCell_URL);
+        const info = await res.json();
+        var lista = [];
+        info.forEach(element => {   //armo lista de temperaturas
+            //console.log(element.temp.value);
+            lista.push(element.temp.value);
+        });
+
+        //Consulta OpenWeatherMap
+        const OpenWeatherMap_URL = `http://api.openweathermap.org/data/2.5/weather?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}&appid=${WEATHER_KEY}&units=metric`;
+        const response = await fetch(OpenWeatherMap_URL);
         const data = await response.json();
         console.log(data.main.temp);
+        lista.push(data.main.temp);
+
+        //Consulta AccuWeather para el ID
+        const AccuWeather_URL = `http://dataservice.accuweather.com/locatiosns/v1/cities/geoposition/search?apikey=${AccuWeather}&q=${this.state.markerPosition.lat},${this.state.markerPosition.lng}`;
+        const Accu = await fetch(AccuWeather_URL);
+        const accuValue = await Accu.json();
+        console.log(accuValue.Key);
+        
+        //Consulta AccuWeather para la temperatura
+        const AccuWeather_URL_Temp = `http://dataservice.accuweather.com/currentconditions/v1/${accuValue.Key}?apikey=${AccuWeather}`;
+        const AccuTemp = await fetch(AccuWeather_URL_Temp);
+        const accuValueTemp = await AccuTemp.json();
+        var accuWeatherTemperatura = accuValueTemp[0].Temperature.Metric.Value;
+        lista.push(accuWeatherTemperatura);
+
+        //Promedios
+        let sum = lista.reduce((previous, current) => current += previous);
+        let avg = sum / lista.length;
+        
+        //Envio el promedio de todos los sensores a renderizar
         this.setState({
-            temperature: data.main.temp,
+            temperature: avg.toFixed(1),
         })
     }
 
