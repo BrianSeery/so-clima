@@ -1,25 +1,37 @@
 import React from 'react';
 
-const WeatherInfo = props => {
+const WeatherInfo = ({temperature, standardDeviation, ...others}) => {
 
     return (
         <div>
             {
-                props.error &&
+                others.error &&
                 <div className='alert alert-denger'>
                     <p>{props.error} </p>
                 </div>
             }
             {
-                props.temperature ? 
+                temperature ? 
                     <div className='card card-body'>
                         <p>
-                            Temperatura: {props.temperature} Cº
+                            Temperatura: {temperature.toFixed(2)} Cº
                         </p>
                     </div>
                 : 
                 <div className='card card-body'>
-                    <p>No request yet</p>
+                    <p>No se obtuvo ningún dato de temperatura</p>
+                </div>
+            }
+            {
+                standardDeviation ? 
+                    <div className='card card-body'>
+                        <p>
+                            Desvío estándar: {standardDeviation.toFixed(4)}
+                        </p>
+                    </div>
+                : 
+                <div className='card card-body'>
+                    <p>Desvío estándar: N/A</p>
                 </div>
             }
         </div>

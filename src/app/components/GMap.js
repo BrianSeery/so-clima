@@ -27,7 +27,8 @@ class Map extends React.Component {
                 lat: this.props.center.lat,
                 lng: this.props.center.lng
             },
-            temperature: ''
+            temperature: '',
+            standardDeviation: ''
         }
     }
     /**
@@ -204,22 +205,29 @@ class Map extends React.Component {
 
     getTemperature = async e => {
         e.preventDefault();
-        console.log('sad');
-        await fetch(`http://localhost:4000/api/so2/clima/temperatura?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}`)
-            .then(response => response.json())
-            .then(json => console.log(json));
-        console.log('asd');
+        let respuesta = {
+            status: "",
+            payload: {
+                temperaturaPromedio: 0,
+                desviacionEstandar: 0
+            },
+            errors: []
+        };
+
         //Consulto al back mandando las coordenadas
-        const back_go_url = `http://localhost:4000/api/so2/clima/temperatura?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}`;
-        const back_res = await fetch(back_go_url);
-        console.log(back_go_url);
-        console.log(back_res);
-        const temp = await back_res.json();
-        console.log('sad');
-        //Envio el promedio de todos los sensores a renderizar
-        this.setState({
-            temperature: temp.toFixed(1),
-        })
+        const back_go_url = `http://localhost:3000/api/so2/clima/temperatura?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}`;
+        await fetch(back_go_url).then(async response => {
+            const jsonResponse = await response.json();
+            respuesta = { 
+                status: jsonResponse.Status,
+                payload: { temperaturaPromedio: jsonResponse.Payload.temperaturaPromedio, desviacionEstandar: jsonResponse.Payload.desviacionEstandar },
+                errors: jsonResponse.Errors
+            };
+            this.setState({
+                temperature: respuesta.payload.temperaturaPromedio,
+                standardDeviation: respuesta.payload.desviacionEstandar
+            });
+        });
     }
 
     render() {
@@ -292,7 +300,7 @@ class Map extends React.Component {
         } else {
             map = (
                 <div style={{ height: this.props.height }}>
-                    <WeatherInfo temperature={this.state.temperature} />
+                    <WeatherInfo temperature={this.state.temperature} standardDeviation={this.state.standardDeviation}/>
                 </div>
             )
             
