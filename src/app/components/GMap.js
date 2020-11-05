@@ -4,9 +4,6 @@ import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
 import WeatherForm from './WeatherForm';
 import WeatherInfo from './WeatherInfo';
-import { WEATHER_KEY } from '../Weather';
-import { CLIMA_CELL_KEY } from '../ClimaCell';
-import { AccuWeather} from '../AccuWeather';
 
 Geocode.setApiKey("AIzaSyB7-xPxXdnAk14Eto8ngIlq_vXsd44vNDQ");
 Geocode.enableDebug();
@@ -28,7 +25,11 @@ class Map extends React.Component {
                 lng: this.props.center.lng
             },
             temperature: '',
-            standardDeviation: ''
+            standardDeviation: '',
+            minTemp: '',
+            maxTemp: '',
+            providers: [],
+            errors: []
         }
     }
     /**
@@ -153,8 +154,8 @@ class Map extends React.Component {
             state = this.getState(addressArray),
             latValue = place.geometry.location.lat(),
             lngValue = place.geometry.location.lng();
-            console.log(lngValue);
-            console.log(latValue);
+        console.log(lngValue);
+        console.log(latValue);
         // Set these values in the state.
         this.setState({
             address: (address) ? address : '',
@@ -208,25 +209,36 @@ class Map extends React.Component {
         let respuesta = {
             status: "",
             payload: {
-                temperaturaPromedio: 0,
-                desviacionEstandar: 0
-            },
-            errors: []
+                temperaturaPromedio: 0.0,
+                desviacionEstandar: 0.0,
+                temperaturaMinima: 0.0,
+                temperaturaMaxima: 0.0,
+                proveedores: []
+            }
         };
 
         //Consulto al back mandando las coordenadas
         const back_go_url = `http://localhost:3000/api/so2/clima/temperatura?lat=${this.state.markerPosition.lat}&lon=${this.state.markerPosition.lng}`;
         await fetch(back_go_url).then(async response => {
             const jsonResponse = await response.json();
-            respuesta = { 
-                status: jsonResponse.Status,
-                payload: { temperaturaPromedio: jsonResponse.Payload.temperaturaPromedio, desviacionEstandar: jsonResponse.Payload.desviacionEstandar },
-                errors: jsonResponse.Errors
+            respuesta = {
+                status: jsonResponse.status,
+                payload: {
+                    temperaturaPromedio: jsonResponse.payload.temperaturaPromedio,
+                    desviacionEstandar: jsonResponse.payload.desviacionEstandar,
+                    temperaturaMinima: jsonResponse.payload.temperaturaMinima,
+                    temperaturaMaxima: jsonResponse.payload.temperaturaMaxima,
+                    proveedores: jsonResponse.payload.proveedores
+                }
             };
-            this.setState({
-                temperature: respuesta.payload.temperaturaPromedio,
-                standardDeviation: respuesta.payload.desviacionEstandar
-            });
+        });
+
+        this.setState({
+            temperature: respuesta.payload.temperaturaPromedio,
+            standardDeviation: respuesta.payload.desviacionEstandar,
+            minTemp: respuesta.payload.temperaturaMinima,
+            maxTemp: respuesta.payload.temperaturaMaxima,
+            providers: respuesta.payload.proveedores
         });
     }
 
@@ -273,7 +285,7 @@ class Map extends React.Component {
         );
         let map;
         if (this.props.center.lat !== undefined) {
-            map = <div>
+            map = (<div>
                 <div>
                     <div className="form-group">
                         <label htmlFor="">Ciudad</label>
@@ -296,14 +308,14 @@ class Map extends React.Component {
                         <div style={{ height: `100%` }} />
                     }
                 />
-            </div>
+            </div>)
         } else {
             map = (
                 <div style={{ height: this.props.height }}>
-                    <WeatherInfo temperature={this.state.temperature} standardDeviation={this.state.standardDeviation}/>
+                    <WeatherInfo temperature={this.state.temperature} standardDeviation={this.state.standardDeviation} minTemp={this.state.minTemp} maxTemp={this.state.maxTemp} />
                 </div>
             )
-            
+
         }
         return (map)
     }

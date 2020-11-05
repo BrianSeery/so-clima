@@ -1,6 +1,6 @@
 import React from 'react';
 
-const WeatherInfo = ({temperature, standardDeviation, ...others}) => {
+const WeatherInfo = ({temperature, standardDeviation, minTemp, maxTemp, ...others}) => {
 
     return (
         <div>
@@ -33,6 +33,26 @@ const WeatherInfo = ({temperature, standardDeviation, ...others}) => {
                 <div className='card card-body'>
                     <p>Desvío estándar: N/A</p>
                 </div>
+            }
+            {
+                minTemp ? 
+                    <div className='card card-body'>
+                        <p>
+                            Temperatura mínima registrada: {minTemp.toFixed(2)} Cº
+                        </p>
+                    </div>
+                : 
+                null
+            }
+            {
+                maxTemp ? 
+                    <div className='card card-body'>
+                        <p>
+                            Temperatura máxima registrada: {maxTemp.toFixed(2)} Cº
+                        </p>
+                    </div>
+                : 
+                null
             }
         </div>
     )
