@@ -29,7 +29,8 @@ class Map extends React.Component {
             minTemp: '',
             maxTemp: '',
             providers: [],
-            errors: []
+            sensoresDescartados: 0,
+            cantSensoresConocidos: 0
         }
     }
     /**
@@ -213,6 +214,8 @@ class Map extends React.Component {
                 desviacionEstandar: 0.0,
                 temperaturaMinima: 0.0,
                 temperaturaMaxima: 0.0,
+                sensoresDescartados: 0,
+                cantSensoresConocidos: 0,
                 proveedores: []
             }
         };
@@ -228,7 +231,9 @@ class Map extends React.Component {
                     desviacionEstandar: jsonResponse.payload.desviacionEstandar,
                     temperaturaMinima: jsonResponse.payload.temperaturaMinima,
                     temperaturaMaxima: jsonResponse.payload.temperaturaMaxima,
-                    proveedores: jsonResponse.payload.proveedores
+                    proveedores: jsonResponse.payload.proveedores,
+                    sensoresDescartados: jsonResponse.payload.sensoresDescartados,
+                    cantSensoresConocidos: jsonResponse.payload.cantSensoresConocidos
                 }
             };
         });
@@ -238,7 +243,9 @@ class Map extends React.Component {
             standardDeviation: respuesta.payload.desviacionEstandar,
             minTemp: respuesta.payload.temperaturaMinima,
             maxTemp: respuesta.payload.temperaturaMaxima,
-            providers: respuesta.payload.proveedores
+            providers: respuesta.payload.proveedores,
+            sensoresDescartados: respuesta.payload.sensoresDescartados,
+            cantSensoresConocidos: respuesta.payload.cantSensoresConocidos
         });
     }
 
@@ -312,7 +319,13 @@ class Map extends React.Component {
         } else {
             map = (
                 <div style={{ height: this.props.height }}>
-                    <WeatherInfo temperature={this.state.temperature} standardDeviation={this.state.standardDeviation} minTemp={this.state.minTemp} maxTemp={this.state.maxTemp} />
+                    <WeatherInfo
+                        temperature={this.state.temperature}
+                        standardDeviation={this.state.standardDeviation}
+                        minTemp={this.state.minTemp}
+                        maxTemp={this.state.maxTemp}
+                        totalSensors={this.state.cantSensoresConocidos}
+                        discardedSensors={this.state.sensoresDescartados} />
                 </div>
             )
 
