@@ -317,6 +317,7 @@ class Map extends React.Component {
                 />
             </div>)
         } else {
+            
             map = (
                 <div style={{ height: this.props.height }}>
                     <WeatherInfo
@@ -324,8 +325,8 @@ class Map extends React.Component {
                         standardDeviation={this.state.standardDeviation}
                         minTemp={this.state.minTemp}
                         maxTemp={this.state.maxTemp}
-                        totalSensors={this.state.cantSensoresConocidos}
-                        discardedSensors={this.state.sensoresDescartados} />
+                        cantSensoresConocidos={this.state.cantSensoresConocidos}
+                        sensoresDescartados={this.state.sensoresDescartados} />
                 </div>
             )
 

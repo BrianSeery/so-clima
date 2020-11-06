@@ -1,6 +1,6 @@
 import React from 'react';
 
-const WeatherInfo = ({temperature, standardDeviation, minTemp, maxTemp, totalSensors, discardedSensors, ...others}) => {
+const WeatherInfo = ({temperature, standardDeviation, minTemp, maxTemp, cantSensoresConocidos, sensoresDescartados, ...others}) => {
 
     return (
         <div>
@@ -11,10 +11,10 @@ const WeatherInfo = ({temperature, standardDeviation, minTemp, maxTemp, totalSen
                 </div>
             }
             {
-                totalSensors && discardedSensors ? 
+                cantSensoresConocidos && sensoresDescartados ? 
                     <div className='card card-body'>
                         <p>
-                            {discardedSensors} sensores descartados de {totalSensors} conocidos
+                            {sensoresDescartados} sensores descartados de {cantSensoresConocidos} conocidos
                         </p>
                     </div>
                 : 
@@ -41,7 +41,7 @@ const WeatherInfo = ({temperature, standardDeviation, minTemp, maxTemp, totalSen
                             Desvío estándar: {standardDeviation.toFixed(4)}
                         </p>
                     </div>
-                : 
+                :
                 <div className='card card-body'>
                     <p>Desvío estándar: N/A</p>
                 </div>
