@@ -19,7 +19,7 @@ const WeatherInfo = ({temperature, standardDeviation, minTemp, maxTemp, cantSens
                     </div>
                 : 
                 <div className='card card-body'>
-                    <p>0 sensores descartados de 0 conocidos</p>
+                    <p>0 sensores descartados de {cantSensoresConocidos} conocidos</p>
                 </div>
             }
             {
